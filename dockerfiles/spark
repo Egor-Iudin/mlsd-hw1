@@ -1,0 +1,11 @@
+FROM bitnami/spark:3.5.0
+
+USER root
+
+RUN pip install --no-cache-dir pandas pyarrow scikit-learn
+# RUN python3 -m venv --system-site-packages /opt/venvs/ml_env
+# RUN /opt/venvs/ml_env/bin/pip install --no-cache-dir pandas scikit-learn
+
+# ENV PYSPARK_PYTHON=/opt/venvs/ml_env/bin/python
+
+USER 1001

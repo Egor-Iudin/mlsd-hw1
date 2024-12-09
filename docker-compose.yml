@@ -1,6 +1,8 @@
 x-airflow-common:
   &airflow-common
-  build: .
+  build:
+    context: .
+    dockerfile: dockerfiles/airflow
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
@@ -13,8 +15,6 @@ x-airflow-common:
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
-    AIRFLOW_CONN_MINIOS3: ${AIRFLOW_CONN_MINIOS3:-}
-    AIRFLOW_CONN_SPARK: ${AIRFLOW_CONN_SPARK:-}
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
@@ -43,7 +43,9 @@ services:
     command: server /data --console-address ":9090"
 
   spark:
-    image: bitnami/spark:3.5.0
+    build:
+      context: .
+      dockerfile: dockerfiles/spark
     environment:
       SPARK_MODE: master
       SPARK_MASTER_WEBUI_PORT: 9080
@@ -57,7 +59,9 @@ services:
           memory: 2G
 
   spark-worker:
-    image: bitnami/spark:3.5.0
+    build:
+      context: .
+      dockerfile: dockerfiles/spark
     scale: 3
     environment:
       SPARK_MODE: worker
